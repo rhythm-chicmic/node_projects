@@ -1,7 +1,7 @@
 const { createServer } = require('node:http');
 const { URL } = require('node:url');
 const server = createServer((req, res) => {
-    const { method, headers, url } = req;
+    const { headers, url } = req;
 
     const requestURL = new URL(url, `http://${headers.host}`);
 
@@ -17,7 +17,7 @@ const server = createServer((req, res) => {
 
 
 
-    console.log( url);
+    console.log(url);
     res.statusCode = 200;
     res.setHeader('Content-type', 'text/plain');
     res.end(`Path : ${pathSegments.join('/')} \n Query : ${JSON.stringify(queryParams)} `);
