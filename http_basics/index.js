@@ -19,9 +19,10 @@ const server = createServer((req, res) => {
 
     console.log( url);
     res.statusCode = 200;
-    res.end('Hello Work');
-})
+    res.setHeader('Content-type', 'text/plain');
+    res.end(`Path : ${pathSegments.join('/')} \n Query : ${JSON.stringify(queryParams)} `);
+});
 
 server.listen(3000, ()=> {
     console.log('Server Running Successfully');
-})
+});
