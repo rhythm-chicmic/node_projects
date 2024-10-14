@@ -8,6 +8,7 @@ const schema = joi.object().keys({
     password: joi.string().min(8).required()
 });
 
+
 const validateRequest = (schema) => {
     return (req,res,next) => {
         const result = schema.validate(req.body);
@@ -32,6 +33,6 @@ app.post('/signup', validateRequest(schema), (req,res) => {
 });
 
 
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log('Port is listening at 3000');
 });
