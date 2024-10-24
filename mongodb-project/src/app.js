@@ -1,6 +1,7 @@
 import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
+import healthCheckRoutes from "./routes/healthCheckRoutes.js"
 
 const app = express()
 
@@ -15,7 +16,9 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 
+// Routes
 
+app.use("/api/v1/healthcheck", healthCheckRoutes)
 
 
 
