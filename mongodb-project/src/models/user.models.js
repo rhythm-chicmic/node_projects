@@ -28,14 +28,19 @@ const userSchema = new Schema({
 );
 
 userSchema.pre("save", async function (next){
-    if(!this.isModified("password")) return next()
-    this.password = bcrypt.hash(this.password, 10)
+    if (!this.isModified("password")) return next();
+    this.password = await bcrypt.hash(this.password, 10); // Await the hashing
 
     next()
 });
 
 userSchema.methods.isPasswordCorrect = async function (password){
-    return await bcrypt.compare(password, this.password);
+    try {
+        return await bcrypt.compare(password, this.password);
+    } catch (error) {
+        console.error("Error comparing password:", error);
+        throw new Error("Password comparison failed");
+    }
 }
 
 userSchema.methods.generateAccessToken = function (){

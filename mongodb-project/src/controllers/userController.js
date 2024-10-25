@@ -31,18 +31,21 @@ const loginUser = asyncHandler( async (req, res) => {
     // get data from body
     const { email, username, password } = req.body;
 
+
     // validation
     if(!email){
         throw new ApiError(400, "Email is Required");
     }
 
-    const user = user.findOne({
+    const user = await User.findOne({
         $or: [{ username }, { email }]
     });
 
     if(!user) {
         throw new ApiError(404, "User not found");
     }
+
+    console.log(user._id); // Should print 'function'
 
 
     //validate Password
@@ -55,7 +58,7 @@ const loginUser = asyncHandler( async (req, res) => {
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user?._id);   ''
 
-    const loggedInUser = await user.findById(user?._id).select(" -password -refreshToken");
+    const loggedInUser = await User.findById(user?._id).select(" -password -refreshToken");
 
     const options = {
         httpOnly: true,
@@ -235,7 +238,7 @@ const refershAccessToken = asyncHandler(async (req ,res) => {
 const changeCurrentPassword  = asyncHandler(async (req,res) => {
     const { oldPassword, newPassword }  = req.body;
     const user = await User.findById(req.user?._id);
-    const isPasswordCorrect = user.isPasswordCorrect(oldPassword);
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
 
     if(!isPasswordCorrect){
         throw new ApiError(401, "Old Password is incorrect");
@@ -259,11 +262,13 @@ const getCurrentUser  = asyncHandler(async (req,res) => {
 
 const updateAccountDetails  = asyncHandler(async (req,res) => {
     const { fullName, email } = req.body;
+    console.log(fullName, req.user);
+
     if(!fullName || !email){
         throw new ApiError(400, "FullName and Email is Required")
     }
 
-    const user = User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set: {
@@ -397,7 +402,7 @@ const getWatchHistory = asyncHandler(async (req,res) =>{
     const { user } = await User.aggregate([
         {
             $match: {
-                _id: new  mongoose.Types.ObjectId(req.user?._id)
+                _id: new mongoose.Types.ObjectId(req.user?._id)
             }
         },
         {
